@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# cyd-spotify-dashboard
-=======
 # CYD Spotify Hub
 
 Interface touch para o **ESP32-2432S028**, também conhecido como **ESP32 CYD / Cheap Yellow Display**, com dashboard inicial e player Spotify integrado.
@@ -155,4 +152,3 @@ docs/images/
 - Melhorar cache da capa do álbum.
 - Adicionar ícones desenhados para os apps.
 - Migrar credenciais Spotify para backend seguro.
->>>>>>> 18c20e9 (Initial CYD Spotify HUB)
