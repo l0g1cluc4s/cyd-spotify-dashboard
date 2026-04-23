@@ -1,62 +1,62 @@
 # CYD Spotify Hub
 
-Interface touch para o **ESP32-2432S028**, também conhecido como **ESP32 CYD / Cheap Yellow Display**, com dashboard inicial e player Spotify integrado.
+Touch UI for the **ESP32-2432S028**, also known as the **ESP32 CYD / Cheap Yellow Display**, featuring a home dashboard and an integrated Spotify player.
 
-O projeto foi feito para a tela ILI9341 320x240 em modo paisagem e touch XPT2046 do CYD.
+This project is built specifically for the CYD's **ILI9341 320x240 landscape display** and **XPT2046 touch controller**.
 
 ![Home screen](docs/images/home.jpeg)
 
 ![Spotify player](docs/images/spotify.jpeg)
 
-## Recursos
+## Features
 
-- Dashboard/Home com relógio grande, data, status de Wi-Fi, IP local e botão para abrir o Spotify.
-- Player Spotify com capa do álbum, nome da música, artista e controles touch.
-- Botões de voltar faixa, play/pause e avançar faixa.
-- Botão Home no player para voltar ao dashboard.
-- Layout otimizado para o ESP32-2432S028 em 320x240.
-- Touch via driver CYD/XPT2046 por polling.
-- Estrutura preparada para adicionar novas telas/apps no futuro.
+- Home dashboard with a large clock, current date, Wi-Fi status, local IP, and a button to open Spotify.
+- Spotify player with album art, track title, artist name, and touch controls.
+- Previous, play/pause, and next track controls.
+- Home button inside the player to return to the dashboard.
+- UI tuned for the ESP32-2432S028 at 320x240 resolution.
+- Touch handled through the CYD/XPT2046 polling driver.
+- Code structure prepared for adding more screens/apps later.
 
 ## Hardware
 
-- ESP32-2432S028 / ESP32 CYD / Cheap Yellow Display.
-- Display ILI9341 2.8" 320x240.
-- Touch XPT2046.
-- USB serial reconhecido como `/dev/ttyUSB0` ou semelhante.
+- ESP32-2432S028 / ESP32 CYD / Cheap Yellow Display
+- ILI9341 2.8" 320x240 display
+- XPT2046 touch controller
+- USB serial device available as `/dev/ttyUSB0` or similar
 
-## Requisitos
+## Requirements
 
-- PlatformIO.
-- Conta Spotify Premium para controlar reprodução.
-- App criado no Spotify Developer Dashboard.
-- Redirect URI no app Spotify:
+- PlatformIO
+- Spotify Premium account for playback control
+- An app created in the Spotify Developer Dashboard
+- This redirect URI configured in the Spotify app:
 
 ```text
 http://127.0.0.1:8888/callback
 ```
 
-Escopos usados:
+Required scopes:
 
 ```text
 user-read-currently-playing user-read-playback-state user-modify-playback-state
 ```
 
-## Configuração Segura
+## Secure Configuration
 
-Este repositório **não deve conter chaves reais**. O arquivo real de credenciais é ignorado pelo Git:
+This repository **must not include real credentials**. The real secrets file is ignored by Git:
 
 ```text
 include/secrets.h
 ```
 
-Crie o arquivo local a partir do exemplo:
+Create your local secrets file from the example:
 
 ```bash
 cp include/secrets_example.h include/secrets.h
 ```
 
-Preencha:
+Fill in your values:
 
 ```cpp
 #define WIFI_SSID "YOUR_WIFI_NAME"
@@ -67,68 +67,68 @@ Preencha:
 #define SPOTIFY_REFRESH_TOKEN "YOUR_SPOTIFY_REFRESH_TOKEN"
 ```
 
-## Gerar Refresh Token
+## Generate a Refresh Token
 
-Com o Redirect URI configurado no Spotify Dashboard, rode:
+With the redirect URI configured in Spotify Dashboard, run:
 
 ```bash
-python3 tools/get_spotify_refresh_token.py "SEU_CLIENT_ID" "SEU_CLIENT_SECRET"
+python3 tools/get_spotify_refresh_token.py "YOUR_CLIENT_ID" "YOUR_CLIENT_SECRET"
 ```
 
-Abra a URL exibida no navegador, autorize o app e copie o `SPOTIFY_REFRESH_TOKEN` gerado para `include/secrets.h`.
+Open the URL shown in the terminal, authorize the app, and copy the generated `SPOTIFY_REFRESH_TOKEN` into `include/secrets.h`.
 
-## Build e Upload
+## Build and Upload
 
-Instale dependências e compile com PlatformIO:
+Compile with PlatformIO:
 
 ```bash
 pio run
 ```
 
-Para gravar no ESP32:
+Upload to the ESP32:
 
 ```bash
 pio run -t upload --upload-port /dev/ttyUSB0
 ```
 
-Se estiver usando o ambiente virtual/local deste projeto:
+If you are using the local virtual environment from this project:
 
 ```bash
 PLATFORMIO_CORE_DIR=/home/lucas/esp32/.platformio /home/lucas/esp32/.venv/bin/pio run -t upload --upload-port /dev/ttyUSB0
 ```
 
-Monitor serial:
+Open the serial monitor:
 
 ```bash
 pio device monitor --port /dev/ttyUSB0
 ```
 
-## WSL e USB
+## WSL and USB
 
-Se estiver no WSL e `/dev/ttyUSB0` não existir, anexe o USB pelo Windows:
+If you are using WSL and `/dev/ttyUSB0` does not exist, attach the USB device from Windows:
 
 ```powershell
 usbipd list
-usbipd bind --busid SEU-BUSID
-usbipd attach --wsl --busid SEU-BUSID
+usbipd bind --busid YOUR-BUSID
+usbipd attach --wsl --busid YOUR-BUSID
 ```
 
-Depois confira no WSL:
+Then check inside WSL:
 
 ```bash
 ls /dev/ttyUSB* /dev/ttyACM*
 ```
 
-## Estrutura
+## Project Structure
 
 ```text
 include/
-  CYD28_TouchscreenR.h     # Driver touch CYD/XPT2046
-  secrets_example.h        # Modelo seguro de credenciais
+  CYD28_TouchscreenR.h     # CYD/XPT2046 touch driver
+  secrets_example.h        # Safe credentials template
 
 src/
-  CYD28_TouchscreenR.cpp   # Implementação touch
-  main.cpp                 # UI, Home, Player e integração Spotify
+  CYD28_TouchscreenR.cpp   # Touch implementation
+  main.cpp                 # UI, Home, Player, and Spotify integration
 
 tools/
   get_spotify_refresh_token.py
@@ -138,17 +138,17 @@ docs/images/
   spotify.jpeg
 ```
 
-## Segurança
+## Security Notes
 
-- Nunca publique `include/secrets.h`.
-- Se alguma chave/token já tiver sido exposta, revogue no Spotify Developer Dashboard e gere novas credenciais.
-- O firmware usa `client.setInsecure()` para simplificar HTTPS no ESP32. Isso é aceitável para protótipo/local, mas não é ideal para produto final.
-- O `SPOTIFY_CLIENT_SECRET` fica gravado no ESP32. Para um projeto público/produção, o ideal é usar um backend intermediário para guardar o secret e entregar tokens temporários ao dispositivo.
+- Never publish `include/secrets.h`.
+- If any credential or token was exposed during development, revoke it in the Spotify Developer Dashboard and generate a new one.
+- The firmware currently uses `client.setInsecure()` to simplify HTTPS on the ESP32. That is acceptable for local prototyping, but not ideal for production.
+- `SPOTIFY_CLIENT_SECRET` is stored on the ESP32. For a public or production-grade project, the recommended design is to move secrets to a backend service and only provide temporary tokens to the device.
 
-## Próximos Passos
+## Future Improvements
 
-- Adicionar novas telas/apps no dashboard.
-- Criar tela de configurações.
-- Melhorar cache da capa do álbum.
-- Adicionar ícones desenhados para os apps.
-- Migrar credenciais Spotify para backend seguro.
+- Add more apps/screens to the dashboard
+- Create a settings screen
+- Improve album art caching
+- Add custom app icons
+- Move Spotify credentials to a secure backend
