@@ -1,0 +1,25 @@
+# Local secrets
+include/secrets.h
+*.env
+.env
+
+# PlatformIO / build artifacts
+.pio/
+.platformio/
+.venv/
+.vscode/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.codex
+
+# Local experiments / reference projects
+Spotify-Diy-Thing/
+bug*.jpg
+bug*.jpeg
+bug*.png
